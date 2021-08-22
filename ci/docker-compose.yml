@@ -1,0 +1,25 @@
+version: "3.9"
+x-defaults: &ci-defaults
+  build:
+    context: ./
+
+services:
+  check:
+    << : *ci-defaults
+    command: hadolint -t error src/Dockerfile
+
+  build:
+    << : *ci-defaults
+    command: ci/steps/build
+
+  test:
+    << : *ci-defaults
+    command: |
+      sh -c '
+        set -eo pipefail
+        echo "coming soon to a theatre near *you*"
+      '
+
+  publish:
+    << : *ci-defaults
+    command: ci/steps/publish

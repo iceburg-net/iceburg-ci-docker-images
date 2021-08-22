@@ -52,3 +52,17 @@ wget | :ox:
 ### as a gitlab agent
 
 ### in iceburg-ci
+
+## development
+
+* lint, build, test `bin/ci`
+* like what you're seeing? publish the images.
+
+```
+PUBLISH_REGISTRY=docker.io \
+PUBLISH_ROLLING_TAGS=true \
+  bin/ci publish
+
+# PUBLISH_REGISTRY determines the registry images are pushed to.
+# PUBLISH_ROLLING_TAGS when true, an additional tag stripped of -PIPLELINE_ID is pushed. 
+```

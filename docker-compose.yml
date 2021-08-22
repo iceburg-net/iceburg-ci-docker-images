@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  step-image-minimal:
+    image: "iceburgci/step-image:minimal-$PIPELINE_ID"
+    build:
+      context: ./src
+      target: minimal
+
+  step-image-universal:
+    image: "iceburgci/step-image:universal-$PIPELINE_ID"
+    build:
+      context: ./src
+      target: universal

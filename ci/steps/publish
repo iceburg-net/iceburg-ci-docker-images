@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# executed from $PROJECT_ROOT by iceburg-ci
+set -eo pipefail
+log(){ printf "[%-5s%s $PIPELINE_STEP] $*\\n" "STEP" >&2; }
+die(){ __ll=ERROR log "$*"; exit 1; }
+
+[ -n "$PUBLISH_REGISTRY" ] || die "ERROR: undefined \$PUBLISH_REGISTRY."
+
+publish(){
+  log "publishing $2 ..." >&2
+  docker tag "$1" "$2"
+  docker push "$2"
+  echo "$2" >> "$PIPELINE_ARTIFACTS_PATH/publish.manifest"
+}
+
+echo>"$PIPELINE_ARTIFACTS_PATH/publish.manifest"
+while read -r img; do
+  publish "$img" "$PUBLISH_REGISTRY/$img"
+  # publish an additional tag stripped of -PIPELINE_ID if PUBLISH_ROLLING_TAGS
+  if [ "${PUBLISH_ROLLING_TAGS:-false}" = true ]; then
+    publish "$img" "$PUBLISH_REGISTRY/${img%-$PIPELINE_ID}"
+  fi
+done < "$PIPELINE_ARTIFACTS_PATH/build.manifest"
+
+log "published artifacts:"
+sed "s/^/#    /g" < "$PIPELINE_ARTIFACTS_PATH/publish.manifest"
