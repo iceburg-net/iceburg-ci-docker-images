@@ -1,0 +1,30 @@
+---
+name: iCEBURG CI build+publish
+# build and publish images on pushes to the default branch (main)
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-publish:
+    name: build and publish images
+    runs-on: ubuntu-latest
+    env:
+      PUBLISH_REGISTRY: docker.io
+      PUBLISH_ROLLING_TAGS: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Execute iCEBURG CI 'check', 'build', and 'test' steps
+        run: bin/ci
+
+      - name: Login into registry ${{ env.PUBLISH_REGISTRY }}
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.PUBLISH_REGISTRY }}
+          username: ${{ secrets.PUBLISH_USERNAME }}
+          password: ${{ secrets.PUBLISH_PASSWORD }}
+
+      - name: Publish built images
+        run: bin/ci publish
