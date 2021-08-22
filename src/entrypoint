@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+export PS1='🐳  \[\033[1;36m\]\u@\h \[\033[1;34m\]\W\[\033[0;35m\] \[\033[1;36m\]$ \[\033[0m\]'
+
+[ $# -eq 0 ] && set -- bash
+if [ -n "$WAIT_HOSTS" ] || [ -n "$WAIT_PATHS" ]; then
+  /wait && exec "$@"
+else
+  exec "$@"
+fi
