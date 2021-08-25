@@ -18,6 +18,7 @@ RUN apk add --no-cache \
   openssh-client-default \
   tree \
   unzip \
+&& ssh-keyscan github.com >> /etc/ssh/ssh_known_hosts \
 && WAIT_VERSION=2.9.0 && WAIT_SHA256SUM=b945d1bc2b6bac5b8998bdc56791a66d99085432a6b164ef6726c52653f4b8d5 &&\
   wget -qO /wait https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERSION/wait &&\
   echo "$WAIT_SHA256SUM */wait" | sha256sum -c &&\
