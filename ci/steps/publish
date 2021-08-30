@@ -10,17 +10,13 @@ publish(){
   log "publishing $2 ..." >&2
   docker tag "$1" "$2"
   docker push "$2"
-  echo "$2" >> "$PIPELINE_ARTIFACTS_PATH/publish.manifest"
+  "$PIPELINE_HOME/bin/manifest" artifact add -t docker "$2"
 }
 
-echo>"$PIPELINE_ARTIFACTS_PATH/publish.manifest"
-while read -r img; do
+"$PIPELINE_HOME/bin/manifest" artifact ls -t docker -s build | while read -r img; do
   publish "$img" "$PUBLISH_REGISTRY/$img"
   # publish an additional tag stripped of -PIPELINE_ID if PUBLISH_ROLLING_TAGS
   if [ "${PUBLISH_ROLLING_TAGS:-false}" = true ]; then
     publish "$img" "$PUBLISH_REGISTRY/${img%-$PIPELINE_ID}"
   fi
-done < "$PIPELINE_ARTIFACTS_PATH/build.manifest"
-
-log "published artifacts:"
-sed "s/^/#    /g" < "$PIPELINE_ARTIFACTS_PATH/publish.manifest"
+done
