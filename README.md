@@ -24,7 +24,8 @@ name | notes
 --- | ---
 [ansible-core](https://github.com/ansible/ansible) | v2.11.3
 [awscli](https://github.com/aws/aws-cli) | v1.20.26, waiting for [official musl build](https://github.com/aws/aws-cli/issues/4685) of v2
-bash | :ox:
+bash | :ox: v5.1.4
+[bats](https://github.com/bats-core/bats-core) | v1.4.1
 bzip2 | -
 curl | :ox:
 docker client | v20.10.8
@@ -32,8 +33,8 @@ docker compose cli | v2.0.0-rc.1
 docker-compose | v1.29.2
 [docker-compose-wait](https://github.com/ufoscout/docker-compose-wait) | v2.9.0, available as `/wait`
 git | :ox:
-[hadolint](https://github.com/hadolint/hadolint) | -
-[jq](https://stedolan.github.io/jq/) | -
+[hadolint](https://github.com/hadolint/hadolint) | v2.7.0
+[jq](https://stedolan.github.io/jq/) | :ox:
 [newman](https://github.com/postmanlabs/newman) | v5.2.4 postman collection runner
 [rubocop](https://rubocop.org/) | v0.39.0
 [shellcheck](https://github.com/koalaman/shellcheck) | -
@@ -55,14 +56,18 @@ wget | :ox:
 
 ## development
 
+the [publish workflow](.github/workflows/github-actions-publish.yml) automatically builds new images and publishes them to registries on commits to the `main` branch.
+
+### manual publishing
+
 * lint, build, test `bin/ci`
 * like what you're seeing? publish the images.
 
 ```
-PUBLISH_REGISTRY=docker.io \
+PUBLISH_REGISTRY=docker.io/iceburgci \
 PUBLISH_ROLLING_TAGS=true \
   bin/ci publish
 
 # PUBLISH_REGISTRY determines the registry images are pushed to.
-# PUBLISH_ROLLING_TAGS when true, an additional tag stripped of -PIPLELINE_ID is pushed. 
+# PUBLISH_ROLLING_TAGS when true, an additional tag stripped of -PIPLELINE_ID is pushed.
 ```

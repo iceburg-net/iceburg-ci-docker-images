@@ -9,6 +9,7 @@ FROM $REGISTRY/docker/compose:alpine-1.29.2 as compose
 FROM $REGISTRY/alpine:3 as minimal
 COPY --from=docker /usr/local/bin/docker /usr/local/bin/
 COPY --from=compose /usr/local/bin/docker-compose /usr/local/bin/
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 RUN apk add --no-cache \
   bash \
   ca-certificates \
@@ -31,15 +32,18 @@ CMD []
 #
 # universal CI image
 #
-FROM $REGISTRY/hadolint/hadolint:latest-alpine as hadolint
+FROM $REGISTRY/bats/bats:v1.4.1 as bats
+FROM $REGISTRY/hadolint/hadolint:2.7.0-alpine as hadolint
 FROM $REGISTRY/adoptopenjdk/openjdk16:alpine-jre as lang-java
 FROM $REGISTRY/node:16-alpine as lang-node
 FROM $REGISTRY/ruby:3.0-alpine as lang-ruby
 FROM $REGISTRY/koalaman/shellcheck:stable as shellcheck
 
 FROM minimal as universal
+COPY --from=bats /opt/bats /opt/bats
 COPY --from=hadolint /bin/hadolint /usr/local/bin/
 COPY --from=shellcheck /bin/shellcheck /usr/local/bin/
+ENV PATH="/opt/bats/bin:$PATH"
 RUN apk add --no-cache \
   bzip2 \
   libstdc++ \

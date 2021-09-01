@@ -1,14 +1,19 @@
+---
 version: "3.9"
 
 services:
   step-image-minimal:
-    image: "iceburgci/step-image:minimal-$PIPELINE_ID"
+    image: "step-image:minimal-$PIPELINE_ID"
     build:
       context: ./src
       target: minimal
+    volumes: ["./tests/test-minimal-image.sh:/test.sh"]
+    command: /test.sh
 
   step-image-universal:
-    image: "iceburgci/step-image:universal-$PIPELINE_ID"
+    image: "step-image:universal-$PIPELINE_ID"
     build:
       context: ./src
       target: universal
+    volumes: ["./tests/test-universal-image.sh:/test.sh"]
+    command: /test.sh
