@@ -1,7 +1,6 @@
 # iceburg-ci-docker-images
 :rocket: docker images useful for CI agents and step execution
 
-
 ## software
 
 image variants are defined in [docker-compose.yml](docker-compose.yml).
@@ -16,7 +15,6 @@ python3 | pip3
 Java JRE 16 | AdoptOpenJDK HotSpot
 Node 16 | npm, yarn
 Ruby 3.0 | gem, bundler
-
 
 ### tools
 
@@ -47,6 +45,13 @@ wget | :ox:
 [yq](https://pypi.org/project/yq) | -
 
 ## usage
+
+images are published to multiple registries. use whichever is closest to your workflow.
+
+* docker.io/iceburgci/step-image:*
+* ghcr.io/iceburgci/step-image:*
+* registry.gitlab.com/iceburgci/step-image:*
+* public.ecr.aws/iceburg/step-image:*
 
 ### as a github action
 

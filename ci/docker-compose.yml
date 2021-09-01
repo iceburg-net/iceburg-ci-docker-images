@@ -6,28 +6,16 @@ x-defaults: &ci-defaults
 services:
   check:
     << : *ci-defaults
-    command: hadolint -t error src/Dockerfile
+    command: "hadolint -t error src/Dockerfile"
 
   build:
     << : *ci-defaults
-    command: |
-      sh -c '
-        set -eo pipefail
-        # build images defined in the root/PROJECT_HOME docker-compose.yml file
-        docker-compose build --pull
-        # add built images to the manifest, using yq to filter away test/profile images
-        docker-compose config | yq -r ".services[] | select(has(\"profiles\") | not) | .image" | \
-          "$PIPELINE_HOME/bin/manifest" artifact add -t docker -
-      '
+    command: "ci/steps/build"
 
   test:
     << : *ci-defaults
-    command: |
-      sh -c '
-        set -eo pipefail
-        echo "coming soon to a theatre near *you*"
-      '
+    command: "tests/test-images.sh"
 
   publish:
     << : *ci-defaults
-    command: ci/steps/publish
+    command: "ci/steps/publish"

@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
-# executed from $PROJECT_ROOT by iceburg-ci
+# executed from $PROJECT_HOME by iceburg-ci
 set -eo pipefail
 log(){ printf "[%-5s%s $PIPELINE_STEP] $*\\n" "STEP" >&2; }
 die(){ __ll=ERROR log "$*"; exit 1; }
 
-[ -n "$PUBLISH_REGISTRY" ] || die "ERROR: undefined \$PUBLISH_REGISTRY."
+[ -n "$PUBLISH_REGISTRIES" ] || {
+  log "PUBLISH_REGISTRIES is empty." \
+  "please provide a space-separated list of docker registires to publish to." \
+  "defaulting to docker.io"
+  PUBLISH_REGISTRIES="docker.io"
+}
 
 publish(){
   log "publishing $2 ..." >&2
@@ -13,10 +18,13 @@ publish(){
   "$PIPELINE_HOME/bin/manifest" artifact add -t docker "$2"
 }
 
-"$PIPELINE_HOME/bin/manifest" artifact ls -t docker -s build | while read -r img; do
-  publish "$img" "$PUBLISH_REGISTRY/$img"
-  # publish an additional tag stripped of -PIPELINE_ID if PUBLISH_ROLLING_TAGS
-  if [ "${PUBLISH_ROLLING_TAGS:-false}" = true ]; then
-    publish "$img" "$PUBLISH_REGISTRY/${img%-$PIPELINE_ID}"
-  fi
+# publish artifacts from the build step
+for registy in $PUBLISH_REGISTRIES; do
+  for img in $("$PIPELINE_HOME/bin/manifest" artifact ls -t docker -s build); do
+    publish "$img" "$registy/$img"
+    # publish an additional tag stripped of -PIPELINE_ID if PUBLISH_ROLLING_TAGS
+    if [ "${PUBLISH_ROLLING_TAGS:-false}" = true ]; then
+      publish "$img" "$registy/${img%-$PIPELINE_ID}"
+    fi
+  done
 done

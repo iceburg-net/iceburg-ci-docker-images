@@ -1,37 +1,65 @@
 ---
 name: iCEBURG CI build+publish
 # build and publish images on pushes to the default branch (main)
+# * https://github.com/rlespinasse/github-slug-action
+# * https://github.com/FranzDiebold/github-env-vars-action
+# * https://github.com/docker/build-push-action/blob/master/docs/advanced/share-image-jobs.md
+
 on:
   push:
     branches:
       - main
 jobs:
-  build-and-publish:
-    name: build and publish images
+  build:
+    name: publish images
     runs-on: ubuntu-latest
-    env:
-      PUBLISH_REGISTRY: docker.io
-      PUBLISH_ROLLING_TAGS: true
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
       - name: Execute iCEBURG CI 'check', 'build', and 'test' steps
         run: bin/ci
 
-      - name: Login into registry ${{ env.PUBLISH_REGISTRY }}
+      - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
-          registry: ${{ env.PUBLISH_REGISTRY }}
-          username: ${{ secrets.PUBLISH_USERNAME }}
-          password: ${{ secrets.PUBLISH_PASSWORD }}
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Publish built images
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to GitLab Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: registry.gitlab.com
+          username: ${{ secrets.GITLAB_USERNAME }}
+          password: ${{ secrets.GITLAB_PASSWORD }}
+
+      - name: Login to AWS ECR Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: public.ecr.aws
+          username: ${{ secrets.ECR_USERNAME }}
+          password: ${{ secrets.ECR_PASSWORD }}
+
+      - name: Publish to Registries
+        env:
+          PUBLISH_REGISTRIES: |
+            docker.io/iceburgci
+            ghcr.io/iceburgci
+            registry.gitlab.com/iceburgci
+            public.ecr.aws/iceburg
+          PUBLISH_ROLLING_TAGS: true
         run: bin/ci publish
 
-      - name: Archive Pipeline Manifest
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: pipeline-manifest
-          path: ci/manifest.json
+      # - name: Archive Pipeline Manifest
+      #   if: ${{ always() }}
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: pipeline-manifest
+      #     path: ci/manifest.json
