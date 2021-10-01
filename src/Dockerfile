@@ -34,7 +34,7 @@ CMD []
 #
 FROM $REGISTRY/bats/bats:v1.4.1 as bats
 FROM $REGISTRY/hadolint/hadolint:2.7.0-alpine as hadolint
-FROM $REGISTRY/adoptopenjdk/openjdk16:alpine-jre as lang-java
+FROM $REGISTRY/adoptopenjdk/openjdk16:alpine-jdk as lang-java
 FROM $REGISTRY/node:16-alpine as lang-node
 FROM $REGISTRY/ruby:3.0-alpine as lang-ruby
 FROM $REGISTRY/koalaman/shellcheck:stable as shellcheck
@@ -51,8 +51,19 @@ RUN apk add --no-cache \
 
 # java + tools
 ENV JAVA_HOME=/opt/java/openjdk
-ENV PATH="$JAVA_HOME/bin:$PATH"
+ENV PATH="$JAVA_HOME/bin:$PATH" \
+    GRADLE_HOME=/opt/gradle \
+    GRADLE_OPTS="-Dorg.gradle.daemon=false"
+    
 COPY --from=lang-java $JAVA_HOME $JAVA_HOME
+RUN export GRADLE_VERSION=7.2 GRADLE_SHASUM=f581709a9c35e9cb92e16f585d2c4bc99b2b1a5f85d2badbd3dc6bff59e1e6dd; \
+  wget --no-verbose --output-document=gradle.zip "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
+  && echo "$GRADLE_SHASUM *gradle.zip" | sha256sum -c \
+  && unzip gradle.zip \
+  && rm gradle.zip \
+  && mv "gradle-${GRADLE_VERSION}" "${GRADLE_HOME}/" \
+  && ln -s "${GRADLE_HOME}/bin/gradle" /usr/local/bin/gradle \
+  && echo "Testing Gradle installation"; gradle --version
 
 # python + tools
 RUN apk add --no-cache \
