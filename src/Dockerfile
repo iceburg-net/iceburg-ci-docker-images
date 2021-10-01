@@ -34,7 +34,7 @@ CMD []
 #
 FROM $REGISTRY/bats/bats:v1.4.1 as bats
 FROM $REGISTRY/hadolint/hadolint:2.7.0-alpine as hadolint
-FROM $REGISTRY/adoptopenjdk/openjdk16:alpine-jdk as lang-java
+FROM $REGISTRY/adoptopenjdk/openjdk16:alpine as lang-java
 FROM $REGISTRY/node:16-alpine as lang-node
 FROM $REGISTRY/ruby:3.0-alpine as lang-ruby
 FROM $REGISTRY/koalaman/shellcheck:stable as shellcheck
@@ -69,12 +69,14 @@ RUN export GRADLE_VERSION=7.2 GRADLE_SHASUM=f581709a9c35e9cb92e16f585d2c4bc99b2b
 RUN apk add --no-cache \
   py3-cryptography \
   py3-pip \
+  py3-regex \
   py3-requests \
   py3-yaml \
 && pip3 install --no-cache-dir --upgrade pip \
 && pip3 install --no-cache-dir \
   ansible-core==2.11.3 \
   awscli==1.20.26 \
+  black==21.8b0 \
   yamllint==1.26.3 \
   yq==2.12.2
 

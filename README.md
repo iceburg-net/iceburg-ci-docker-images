@@ -24,6 +24,7 @@ name | notes
 [awscli](https://github.com/aws/aws-cli) | v1.20.26, waiting for [official musl build](https://github.com/aws/aws-cli/issues/4685) of v2
 bash | :ox: v5.1.4
 [bats](https://github.com/bats-core/bats-core) | v1.4.1
+[black](https://github.com/psf/black) | 21.8b0 , pep8 linter and formatter
 bzip2 | -
 curl | :ox:
 docker client | v20.10.8
@@ -42,8 +43,8 @@ openssl | -
 tree | :ox:
 unzip | :ox:
 wget | :ox:
-[yamllint](https://github.com/adrienverge/yamllint) | -
-[yq](https://pypi.org/project/yq) | -
+[yamllint](https://github.com/adrienverge/yamllint) | v1.26.3
+[yq](https://pypi.org/project/yq) | v2.12.2
 
 ## usage
 
