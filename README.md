@@ -35,6 +35,7 @@ git | :ox:
 gradle | v7.2
 [hadolint](https://github.com/hadolint/hadolint) | v2.7.0
 [jq](https://stedolan.github.io/jq/) | :ox:
+maven | v3.8.3
 [newman](https://github.com/postmanlabs/newman) | v5.2.4 postman collection runner
 [rubocop](https://rubocop.org/) | v0.39.0
 [shellcheck](https://github.com/koalaman/shellcheck) | -

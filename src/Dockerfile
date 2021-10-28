@@ -51,11 +51,11 @@ RUN apk add --no-cache \
 
 # java + tools
 ENV JAVA_HOME=/opt/java/openjdk
-ENV PATH="$JAVA_HOME/bin:$PATH" \
+ENV PATH="$JAVA_HOME/bin:/opt/maven/bin:$PATH" \
     GRADLE_HOME=/opt/gradle \
     GRADLE_OPTS="-Dorg.gradle.daemon=false"
-    
 COPY --from=lang-java $JAVA_HOME $JAVA_HOME
+
 RUN export GRADLE_VERSION=7.2 GRADLE_SHASUM=f581709a9c35e9cb92e16f585d2c4bc99b2b1a5f85d2badbd3dc6bff59e1e6dd; \
   wget --no-verbose --output-document=gradle.zip "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
   && echo "$GRADLE_SHASUM *gradle.zip" | sha256sum -c \
@@ -64,6 +64,14 @@ RUN export GRADLE_VERSION=7.2 GRADLE_SHASUM=f581709a9c35e9cb92e16f585d2c4bc99b2b
   && mv "gradle-${GRADLE_VERSION}" "${GRADLE_HOME}/" \
   && ln -s "${GRADLE_HOME}/bin/gradle" /usr/local/bin/gradle \
   && echo "Testing Gradle installation"; gradle --version
+
+RUN export MAVEN_VERSION=3.8.3 MAVEN_SHASUM=0f1597d11085b8fe93d84652a18c6deea71ece9fabba45a02cf6600c7758fd5b; \
+  wget --no-verbose --output-document=maven.tar.gz "https://dlcdn.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz" \
+  && echo "$MAVEN_SHASUM *maven.tar.gz" | sha256sum -c \
+  && tar xzf maven.tar.gz \
+  && rm maven.tar.gz \
+  && mv "apache-maven-${MAVEN_VERSION}" /opt/maven/ \
+  && echo "Testing Maven installation"; mvn -v
 
 # python + tools
 RUN apk add --no-cache \
