@@ -32,17 +32,22 @@ CMD []
 #
 # universal CI image
 #
+
 FROM $REGISTRY/bats/bats:v1.4.1 as bats
 FROM $REGISTRY/hadolint/hadolint:2.7.0-alpine as hadolint
 FROM $REGISTRY/adoptopenjdk/openjdk16:alpine as lang-java
 FROM $REGISTRY/node:16-alpine as lang-node
 FROM $REGISTRY/ruby:3.0-alpine as lang-ruby
+FROM $REGISTRY/hashicorp/packer:1.7.8 as packer
 FROM $REGISTRY/koalaman/shellcheck:stable as shellcheck
+FROM $REGISTRY/hashicorp/terraform:1.0.11 as terraform
 
 FROM minimal as universal
 COPY --from=bats /opt/bats /opt/bats
 COPY --from=hadolint /bin/hadolint /usr/local/bin/
 COPY --from=shellcheck /bin/shellcheck /usr/local/bin/
+COPY --from=packer /bin/packer /usr/local/bin/
+COPY --from=terraform /bin/terraform /usr/local/bin/
 ENV PATH="/opt/bats/bin:$PATH"
 RUN apk add --no-cache \
   bzip2 \

@@ -37,10 +37,12 @@ gradle | v7.2
 [jq](https://stedolan.github.io/jq/) | :ox:
 maven | v3.8.3
 [newman](https://github.com/postmanlabs/newman) | v5.2.4 postman collection runner
+[packer](https://www.packer.io/) | v1.7.8
 [rubocop](https://rubocop.org/) | v0.39.0
 [shellcheck](https://github.com/koalaman/shellcheck) | -
 openssh | :ox:
 openssl | -
+[terraform](https://www.terraform.io/) | v1.0.11
 tree | :ox:
 unzip | :ox:
 wget | :ox:
