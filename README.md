@@ -12,7 +12,7 @@ image variants are defined in [docker-compose.yml](docker-compose.yml).
 language | notes
 --- | ---
 python3 | pip3
-Java JDK 16 | AdoptOpenJDK HotSpot
+Java JDK 17 | Eclipse Temurin OpenJDK
 Node 16 | npm, yarn
 Ruby 3.0 | gem, bundler
 
@@ -31,8 +31,8 @@ docker client | v20.10.8
 docker compose cli | v2.0.0-rc.1
 docker-compose | v1.29.2
 [docker-compose-wait](https://github.com/ufoscout/docker-compose-wait) | v2.9.0, available as `/wait`
-git | :ox:
-gradle | v7.2
+git | :ox: "the stupid content tracker"
+[gradle](https://gradle.org/) | v7.3
 [hadolint](https://github.com/hadolint/hadolint) | v2.7.0
 [jq](https://stedolan.github.io/jq/) | :ox:
 maven | v3.8.3

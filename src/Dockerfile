@@ -35,7 +35,7 @@ CMD []
 
 FROM $REGISTRY/bats/bats:v1.4.1 as bats
 FROM $REGISTRY/hadolint/hadolint:2.7.0-alpine as hadolint
-FROM $REGISTRY/adoptopenjdk/openjdk16:alpine as lang-java
+FROM $REGISTRY/eclipse-temurin:17-jdk-alpine as lang-java
 FROM $REGISTRY/node:16-alpine as lang-node
 FROM $REGISTRY/ruby:3.0-alpine as lang-ruby
 FROM $REGISTRY/hashicorp/packer:1.7.8 as packer
@@ -61,7 +61,7 @@ ENV PATH="$JAVA_HOME/bin:/opt/maven/bin:$PATH" \
     GRADLE_OPTS="-Dorg.gradle.daemon=false"
 COPY --from=lang-java $JAVA_HOME $JAVA_HOME
 
-RUN export GRADLE_VERSION=7.2 GRADLE_SHASUM=f581709a9c35e9cb92e16f585d2c4bc99b2b1a5f85d2badbd3dc6bff59e1e6dd; \
+RUN export GRADLE_VERSION=7.3 GRADLE_SHASUM=de8f52ad49bdc759164f72439a3bf56ddb1589c4cde802d3cec7d6ad0e0ee410; \
   wget --no-verbose --output-document=gradle.zip "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
   && echo "$GRADLE_SHASUM *gradle.zip" | sha256sum -c \
   && unzip gradle.zip \
