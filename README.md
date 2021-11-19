@@ -27,9 +27,9 @@ bash | :ox: v5.1.4
 [black](https://github.com/psf/black) | 21.8b0 , pep8 linter and formatter
 bzip2 | -
 curl | :ox:
-docker client | v20.10.8
-docker compose cli | v2.0.0-rc.1
-docker-compose | v1.29.2
+docker client | :ox: v20.10.11
+[docker compose cli v2](https://github.com/docker/compose) | :ox: v2.1.1
+docker-compose legacy | :ox: v1.29.2
 [docker-compose-wait](https://github.com/ufoscout/docker-compose-wait) | v2.9.0, available as `/wait`
 git | :ox: "the stupid content tracker"
 [gradle](https://gradle.org/) | v7.3

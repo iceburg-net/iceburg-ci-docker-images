@@ -3,7 +3,7 @@ ARG REGISTRY=docker.io
 #
 # minimal CI image
 #
-FROM $REGISTRY/docker:20.10.8 as docker
+FROM $REGISTRY/docker:20.10.11 as docker
 FROM $REGISTRY/docker/compose:alpine-1.29.2 as compose
 
 FROM $REGISTRY/alpine:3 as minimal
@@ -20,10 +20,19 @@ RUN apk add --no-cache \
   tree \
   unzip \
 && ssh-keyscan github.com >> /etc/ssh/ssh_known_hosts \
-&& WAIT_VERSION=2.9.0 && WAIT_SHA256SUM=b945d1bc2b6bac5b8998bdc56791a66d99085432a6b164ef6726c52653f4b8d5 &&\
-  wget -qO /wait https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERSION/wait &&\
-  echo "$WAIT_SHA256SUM */wait" | sha256sum -c &&\
-  chmod +x /wait
+&& export WAIT_VERSION=2.9.0 WAIT_SHA256SUM=b945d1bc2b6bac5b8998bdc56791a66d99085432a6b164ef6726c52653f4b8d5 \
+  && wget -qO /wait https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERSION/wait \
+  && echo "$WAIT_SHA256SUM */wait" | sha256sum -c \
+  && chmod +x /wait
+
+# install docker compose v2 aka "docker (space) compose"
+RUN export COMPOSE_VERSION=2.1.1 COMPOSE_SHA256SUM=dad12a5cbc4dae3809138c070c06abe4a92ce3470679a0f67da920052b6e51c7 \
+  && wget -qO docker-compose "https://github.com/docker/compose/releases/download/v${COMPOSE_VERSION}/docker-compose-linux-x86_64" \
+  && echo "$COMPOSE_SHA256SUM *docker-compose" | sha256sum -c \
+  && chmod +x docker-compose \
+  && mkdir -p /usr/lib/docker/cli-plugins \
+  && mv docker-compose /usr/lib/docker/cli-plugins/ \
+  && echo "Testing installation"; docker compose version
 
 COPY entrypoint /entrypoint
 ENTRYPOINT ["/entrypoint"]
@@ -61,8 +70,8 @@ ENV PATH="$JAVA_HOME/bin:/opt/maven/bin:$PATH" \
     GRADLE_OPTS="-Dorg.gradle.daemon=false"
 COPY --from=lang-java $JAVA_HOME $JAVA_HOME
 
-RUN export GRADLE_VERSION=7.3 GRADLE_SHASUM=de8f52ad49bdc759164f72439a3bf56ddb1589c4cde802d3cec7d6ad0e0ee410; \
-  wget --no-verbose --output-document=gradle.zip "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
+RUN export GRADLE_VERSION=7.3 GRADLE_SHASUM=de8f52ad49bdc759164f72439a3bf56ddb1589c4cde802d3cec7d6ad0e0ee410 \
+  && wget -qO gradle.zip "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
   && echo "$GRADLE_SHASUM *gradle.zip" | sha256sum -c \
   && unzip gradle.zip \
   && rm gradle.zip \
@@ -70,8 +79,8 @@ RUN export GRADLE_VERSION=7.3 GRADLE_SHASUM=de8f52ad49bdc759164f72439a3bf56ddb15
   && ln -s "${GRADLE_HOME}/bin/gradle" /usr/local/bin/gradle \
   && echo "Testing Gradle installation"; gradle --version
 
-RUN export MAVEN_VERSION=3.8.3 MAVEN_SHASUM=0f1597d11085b8fe93d84652a18c6deea71ece9fabba45a02cf6600c7758fd5b; \
-  wget --no-verbose --output-document=maven.tar.gz "https://dlcdn.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz" \
+RUN export MAVEN_VERSION=3.8.3 MAVEN_SHASUM=0f1597d11085b8fe93d84652a18c6deea71ece9fabba45a02cf6600c7758fd5b \
+  && wget -qO maven.tar.gz "https://dlcdn.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz" \
   && echo "$MAVEN_SHASUM *maven.tar.gz" | sha256sum -c \
   && tar xzf maven.tar.gz \
   && rm maven.tar.gz \
@@ -112,9 +121,3 @@ RUN runDeps="$( scanelf --needed --nobanner --format '%n#p' --recursive /usr/loc
   zlib-dev \
 && gem install \
   rubocop:0.39.0
-
-# install docker compose v2 aka "docker (space) compose"
-RUN curl -L https://github.com/docker/compose-cli/releases/download/v2.0.0-rc.1/docker-compose-linux-amd64 > docker-compose \
-&& chmod +x docker-compose \
-&& mkdir -p /usr/lib/docker/cli-plugins \
-&& mv docker-compose /usr/lib/docker/cli-plugins/
