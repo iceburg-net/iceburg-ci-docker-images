@@ -20,7 +20,7 @@ Ruby 3.0 | gem, bundler
 
 name | notes
 --- | ---
-[ansible-core](https://github.com/ansible/ansible) | v2.11.3
+[ansible](https://github.com/ansible/ansible) | v4.8.0
 [awscli](https://github.com/aws/aws-cli) | v1.20.26, waiting for [official musl build](https://github.com/aws/aws-cli/issues/4685) of v2
 bash | :ox: v5.1.4
 [bats](https://github.com/bats-core/bats-core) | v1.4.1

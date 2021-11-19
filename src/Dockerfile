@@ -87,7 +87,7 @@ RUN apk add --no-cache \
   py3-yaml \
 && pip3 install --no-cache-dir --upgrade pip \
 && pip3 install --no-cache-dir \
-  ansible-core==2.11.3 \
+  ansible==4.8.0 \
   awscli==1.20.26 \
   black==21.8b0 \
   yamllint==1.26.3 \
