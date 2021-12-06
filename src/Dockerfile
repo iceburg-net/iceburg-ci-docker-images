@@ -26,7 +26,7 @@ RUN apk add --no-cache \
   && chmod +x /wait
 
 # install docker compose v2 aka "docker (space) compose"
-RUN export COMPOSE_VERSION=2.1.1 COMPOSE_SHA256SUM=dad12a5cbc4dae3809138c070c06abe4a92ce3470679a0f67da920052b6e51c7 \
+RUN export COMPOSE_VERSION=2.2.2 COMPOSE_SHA256SUM=92551cd3d22b41536ce8345fe06795ad0d08cb3c17b693ecbfe41176e501bfd4 \
   && wget -qO docker-compose "https://github.com/docker/compose/releases/download/v${COMPOSE_VERSION}/docker-compose-linux-x86_64" \
   && echo "$COMPOSE_SHA256SUM *docker-compose" | sha256sum -c \
   && chmod +x docker-compose \
@@ -42,13 +42,13 @@ CMD []
 # universal CI image
 #
 
-FROM $REGISTRY/bats/bats:v1.4.1 as bats
-FROM $REGISTRY/hadolint/hadolint:2.7.0-alpine as hadolint
+FROM $REGISTRY/bats/bats:1.5.0 as bats
+FROM $REGISTRY/hadolint/hadolint:2.8.0-alpine as hadolint
 FROM $REGISTRY/eclipse-temurin:17-jdk-alpine as lang-java
-FROM $REGISTRY/node:16-alpine as lang-node
-FROM $REGISTRY/ruby:3.0-alpine as lang-ruby
+FROM $REGISTRY/node:16.13.1-alpine as lang-node
+FROM $REGISTRY/ruby:3.0.3-alpine as lang-ruby
 FROM $REGISTRY/hashicorp/packer:1.7.8 as packer
-FROM $REGISTRY/koalaman/shellcheck:stable as shellcheck
+FROM $REGISTRY/koalaman/shellcheck-alpine:v0.8.0 as shellcheck
 FROM $REGISTRY/hashicorp/terraform:1.0.11 as terraform
 
 FROM minimal as universal
@@ -59,6 +59,7 @@ COPY --from=packer /bin/packer /usr/local/bin/
 COPY --from=terraform /bin/terraform /usr/local/bin/
 ENV PATH="/opt/bats/bin:$PATH"
 RUN apk add --no-cache \
+  build-base \
   bzip2 \
   libstdc++ \
   openssl
@@ -70,7 +71,7 @@ ENV PATH="$JAVA_HOME/bin:/opt/maven/bin:$PATH" \
     GRADLE_OPTS="-Dorg.gradle.daemon=false"
 COPY --from=lang-java $JAVA_HOME $JAVA_HOME
 
-RUN export GRADLE_VERSION=7.3 GRADLE_SHASUM=de8f52ad49bdc759164f72439a3bf56ddb1589c4cde802d3cec7d6ad0e0ee410 \
+RUN export GRADLE_VERSION=7.3.1 GRADLE_SHASUM=9afb3ca688fc12c761a0e9e4321e4d24e977a4a8916c8a768b1fe05ddb4d6b66 \
   && wget -qO gradle.zip "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
   && echo "$GRADLE_SHASUM *gradle.zip" | sha256sum -c \
   && unzip gradle.zip \
@@ -79,7 +80,7 @@ RUN export GRADLE_VERSION=7.3 GRADLE_SHASUM=de8f52ad49bdc759164f72439a3bf56ddb15
   && ln -s "${GRADLE_HOME}/bin/gradle" /usr/local/bin/gradle \
   && echo "Testing Gradle installation"; gradle --version
 
-RUN export MAVEN_VERSION=3.8.3 MAVEN_SHASUM=0f1597d11085b8fe93d84652a18c6deea71ece9fabba45a02cf6600c7758fd5b \
+RUN export MAVEN_VERSION=3.8.4 MAVEN_SHASUM=2cdc9c519427bb20fdc25bef5a9063b790e4abd930e7b14b4e9f4863d6f9f13c \
   && wget -qO maven.tar.gz "https://dlcdn.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz" \
   && echo "$MAVEN_SHASUM *maven.tar.gz" | sha256sum -c \
   && tar xzf maven.tar.gz \
@@ -89,23 +90,28 @@ RUN export MAVEN_VERSION=3.8.3 MAVEN_SHASUM=0f1597d11085b8fe93d84652a18c6deea71e
 
 # python + tools
 RUN apk add --no-cache \
+  py3-bcrypt \
   py3-cryptography \
+  py3-pynacl \
   py3-pip \
   py3-regex \
   py3-requests \
+  py3-ruamel.yaml \
   py3-yaml \
 && pip3 install --no-cache-dir --upgrade pip \
 && pip3 install --no-cache-dir \
-  ansible==4.8.0 \
-  awscli==1.20.26 \
-  black==21.8b0 \
+  ansible==5.0.1 \
+  ansible-lint==5.3.0 \
+  awscli==1.22.21 \
+  black==21.12b0 \
+  molecule==3.5.2 \
   yamllint==1.26.3 \
-  yq==2.12.2
+  yq==2.13.0
 
 # node + tools
 COPY --from=lang-node /usr/local /usr/local
 RUN npm install --global \
-  newman@5.2.4
+  newman@5.3.0
 
 # ruby + tools
 ENV GEM_HOME=/usr/local/bundle
@@ -120,4 +126,4 @@ RUN runDeps="$( scanelf --needed --nobanner --format '%n#p' --recursive /usr/loc
   yaml-dev \
   zlib-dev \
 && gem install \
-  rubocop:0.39.0
+  rubocop:1.23.0
