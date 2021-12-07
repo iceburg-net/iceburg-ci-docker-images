@@ -52,8 +52,8 @@ jobs:
           PUBLISH_REGISTRIES: |
             docker.io/iceburgci
             ghcr.io/iceburgci
-            registry.gitlab.com/iceburgci
             public.ecr.aws/iceburg
+          #  registry.gitlab.com/iceburgci
           PUBLISH_ROLLING_TAGS: true
         run: bin/ci publish
 
