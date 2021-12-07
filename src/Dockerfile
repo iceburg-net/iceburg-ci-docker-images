@@ -105,6 +105,7 @@ RUN apk add --no-cache \
   awscli==1.22.21 \
   black==21.12b0 \
   molecule==3.5.2 \
+  molecule-docker \
   yamllint==1.26.3 \
   yq==2.13.0
 
