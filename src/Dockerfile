@@ -3,7 +3,7 @@ ARG REGISTRY=docker.io
 #
 # minimal CI image
 #
-FROM $REGISTRY/docker:20.10.11 as docker
+FROM $REGISTRY/docker:20.10.12 as docker
 FROM $REGISTRY/docker/compose:alpine-1.29.2 as compose
 
 FROM $REGISTRY/alpine:3 as minimal
@@ -26,7 +26,7 @@ RUN apk add --no-cache \
   && chmod +x /wait
 
 # install docker compose v2 aka "docker (space) compose"
-RUN export COMPOSE_VERSION=2.2.2 COMPOSE_SHA256SUM=92551cd3d22b41536ce8345fe06795ad0d08cb3c17b693ecbfe41176e501bfd4 \
+RUN export COMPOSE_VERSION=2.2.3 COMPOSE_SHA256SUM=f15a7cd54a85f760a8ece92da63fb85b93036c72ead8056391b8a3fe9dc73134 \
   && wget -qO docker-compose "https://github.com/docker/compose/releases/download/v${COMPOSE_VERSION}/docker-compose-linux-x86_64" \
   && echo "$COMPOSE_SHA256SUM *docker-compose" | sha256sum -c \
   && chmod +x docker-compose \
@@ -45,11 +45,11 @@ CMD []
 FROM $REGISTRY/bats/bats:1.5.0 as bats
 FROM $REGISTRY/hadolint/hadolint:2.8.0-alpine as hadolint
 FROM $REGISTRY/eclipse-temurin:17-jdk-alpine as lang-java
-FROM $REGISTRY/node:16.13.1-alpine as lang-node
-FROM $REGISTRY/ruby:3.0.3-alpine as lang-ruby
-FROM $REGISTRY/hashicorp/packer:1.7.8 as packer
+FROM $REGISTRY/node:16.13.2-alpine as lang-node
+FROM $REGISTRY/ruby:3.1.0-alpine as lang-ruby
+FROM $REGISTRY/hashicorp/packer:1.7.9 as packer
 FROM $REGISTRY/koalaman/shellcheck-alpine:v0.8.0 as shellcheck
-FROM $REGISTRY/hashicorp/terraform:1.0.11 as terraform
+FROM $REGISTRY/hashicorp/terraform:1.1.4 as terraform
 
 FROM minimal as universal
 COPY --from=bats /opt/bats /opt/bats
@@ -71,7 +71,7 @@ ENV PATH="$JAVA_HOME/bin:/opt/maven/bin:$PATH" \
     GRADLE_OPTS="-Dorg.gradle.daemon=false"
 COPY --from=lang-java $JAVA_HOME $JAVA_HOME
 
-RUN export GRADLE_VERSION=7.3.1 GRADLE_SHASUM=9afb3ca688fc12c761a0e9e4321e4d24e977a4a8916c8a768b1fe05ddb4d6b66 \
+RUN export GRADLE_VERSION=7.3.3 GRADLE_SHASUM=b586e04868a22fd817c8971330fec37e298f3242eb85c374181b12d637f80302 \
   && wget -qO gradle.zip "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
   && echo "$GRADLE_SHASUM *gradle.zip" | sha256sum -c \
   && unzip gradle.zip \
@@ -100,9 +100,9 @@ RUN apk add --no-cache \
   py3-yaml \
 && pip3 install --no-cache-dir --upgrade pip \
 && pip3 install --no-cache-dir \
-  ansible==5.0.1 \
-  ansible-lint==5.3.0 \
-  awscli==1.22.21 \
+  ansible==5.2.0 \
+  ansible-lint==5.3.2 \
+  awscli==1.22.42 \
   black==21.12b0 \
   molecule==3.5.2 \
   molecule-docker \
@@ -112,7 +112,7 @@ RUN apk add --no-cache \
 # node + tools
 COPY --from=lang-node /usr/local /usr/local
 RUN npm install --global \
-  newman@5.3.0
+  newman@5.3.1
 
 # ruby + tools
 ENV GEM_HOME=/usr/local/bundle
@@ -127,4 +127,4 @@ RUN runDeps="$( scanelf --needed --nobanner --format '%n#p' --recursive /usr/loc
   yaml-dev \
   zlib-dev \
 && gem install \
-  rubocop:1.23.0
+  rubocop:1.25.0
