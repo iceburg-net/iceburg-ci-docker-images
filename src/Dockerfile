@@ -65,10 +65,9 @@ RUN apk add --no-cache \
   openssl
 
 # java + tools
-ENV JAVA_HOME=/opt/java/openjdk
-ENV PATH="$JAVA_HOME/bin:/opt/maven/bin:$PATH" \
-    GRADLE_HOME=/opt/gradle \
-    GRADLE_OPTS="-Dorg.gradle.daemon=false"
+ENV JAVA_HOME=/opt/java/openjdk \
+    GRADLE_HOME=/opt/gradle
+ENV PATH="$JAVA_HOME/bin:$GRADLE_HOME/bin:/opt/maven/bin:$PATH"
 COPY --from=lang-java $JAVA_HOME $JAVA_HOME
 
 RUN export GRADLE_VERSION=7.3.3 GRADLE_SHASUM=b586e04868a22fd817c8971330fec37e298f3242eb85c374181b12d637f80302 \
@@ -77,7 +76,11 @@ RUN export GRADLE_VERSION=7.3.3 GRADLE_SHASUM=b586e04868a22fd817c8971330fec37e29
   && unzip gradle.zip \
   && rm gradle.zip \
   && mv "gradle-${GRADLE_VERSION}" "${GRADLE_HOME}/" \
-  && ln -s "${GRADLE_HOME}/bin/gradle" /usr/local/bin/gradle \
+  && echo "org.gradle.jvmargs=--add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \\
+    --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED \\
+    --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED \\
+    --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED \\
+    --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" >> "$GRADLE_HOME/gradle.properties" \
   && echo "Testing Gradle installation"; gradle --version
 
 RUN export MAVEN_VERSION=3.8.4 MAVEN_SHASUM=2cdc9c519427bb20fdc25bef5a9063b790e4abd930e7b14b4e9f4863d6f9f13c \
