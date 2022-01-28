@@ -34,7 +34,7 @@ docker client | :ox: v20.10.12
 docker-compose legacy | :ox: v1.29.2
 [docker-compose-wait](https://github.com/ufoscout/docker-compose-wait) | v2.9.0, available as `/wait`
 git | :ox: "the stupid content tracker"
-[gradle](https://gradle.org/) | v7.3.3 , includes jdk16+ fixes for `google-java-format` per https://github.com/diffplug/spotless/issues/834
+[gradle](https://gradle.org/) | v7.3.3
 [hadolint](https://github.com/hadolint/hadolint) | v2.8.0
 [jq](https://stedolan.github.io/jq/) | :ox:
 maven | v3.8.4
