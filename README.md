@@ -13,8 +13,8 @@ language | notes
 --- | ---
 python3 | pip3
 Java JDK 17 | Eclipse Temurin OpenJDK
-Node 16.13.2 | npm, yarn
-Ruby 3.1.0 | gem, bundler
+Node 18.2.0 | npm, yarn
+Ruby 3.1.2 | gem, bundler
 
 ### tools
 
@@ -24,28 +24,28 @@ name | notes
 [ansible-lint](https://github.com/ansible-community/ansible-lint) | v5.3.2
 [awscli](https://github.com/aws/aws-cli) | v1.22.42, waiting for [official musl build](https://github.com/aws/aws-cli/issues/4685) of v2
 bash | :ox: v5.1.4
-[bats](https://github.com/bats-core/bats-core) | v1.5.0
+[bats](https://github.com/bats-core/bats-core) | v1.7.0
 [black](https://github.com/psf/black) | 21.12b0 , pep8 linter and formatter
 [gcc](https://pkgs.alpinelinux.org/package/v3.14/main/x86/build-base) | with g++, libc-dev, make, and patch
 bzip2 | -
 curl | :ox:
-docker client | :ox: v20.10.12
-[docker compose cli v2](https://github.com/docker/compose) | :ox: v2.2.3
-docker-compose legacy | :ox: v1.29.2
+docker client | :ox: v20.10.16
+[docker compose cli v2](https://github.com/docker/compose) | :ox: v2.5.1
+docker-compose legacy v1 | :ox: v1.29.2
 [docker-compose-wait](https://github.com/ufoscout/docker-compose-wait) | v2.9.0, available as `/wait`
 git | :ox: "the stupid content tracker"
-[gradle](https://gradle.org/) | v7.3.3
-[hadolint](https://github.com/hadolint/hadolint) | v2.8.0
+[gradle](https://gradle.org/) | v7.4.2
+[hadolint](https://github.com/hadolint/hadolint) | v2.9.3
 [jq](https://stedolan.github.io/jq/) | :ox:
-maven | v3.8.4
+maven | v3.8.5
 [molecule](https://github.com/ansible-community/molecule) | v3.5.2
 [newman](https://github.com/postmanlabs/newman) | v5.3.1 postman collection runner
-[packer](https://www.packer.io/) | v1.7.9
+[packer](https://www.packer.io/) | v1.8.0
 [rubocop](https://rubocop.org/) | v1.25.0
 [shellcheck](https://github.com/koalaman/shellcheck) | v0.8.0
 openssh | :ox:
 openssl | -
-[terraform](https://www.terraform.io/) | v1.1.4
+[terraform](https://www.terraform.io/) | v1.2.1
 tree | :ox:
 unzip | :ox:
 wget | :ox:
